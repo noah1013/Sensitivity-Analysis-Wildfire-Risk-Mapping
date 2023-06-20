@@ -21,7 +21,7 @@ import rasterio.mask
 def Poly_fire(year, current_directory):
 
     # setting the directory and the selected year.
-    name_change = current_directory + "\\Data\\Modis_clipped\\" + str(year)
+    name_change = current_directory + "\\Data\\Intermediate\\Modis_clipped\\" + str(year)
     print("\nYear = "+ str(year))
 
     file_counter = 1
@@ -32,11 +32,11 @@ def Poly_fire(year, current_directory):
         # file name to use as an attribute in the polygons.
 
         year_month = os.path.basename(renamed_file)
-        # Remove the last four characters (because the suffix is '.tif')
-        year_month = year_month[:-4]
+        # Remove the last four characters (because the suffix is '.tiff')
+        year_month = year_month[:-5]
 
         # make a new directory to hold the data:
-        new_dir = current_directory + "\\Data\\data_cleaned\\modis_poly\\" + str(year) + "\\"
+        new_dir = current_directory + "\\Data\\Intermediate\\modis_poly\\" + str(year) + "\\"
 
         if os.path.exists(new_dir):
             # do nothing

@@ -20,7 +20,7 @@ import rasterio.mask
 def Modis_nc(year, current_directory):
 
     # setting the directory and the selected year.
-    name_change = current_directory + "\\Data\\MODIS\\" + str(year)
+    name_change = current_directory + "\\Data\\Initial\\MODIS\\Reprojected\\" + str(year)
 
 
     for file_name in os.listdir(name_change):
@@ -44,56 +44,52 @@ def Modis_nc(year, current_directory):
 
             # adding the MONTH to the file name.
 
-            if '001.Win08' in file_name:
+            if '001.reproj' in file_name:
 
                 intermediate = new_file_name + 'Jan'
 
             # to avoid conflicts with the value '032'
-            elif '032.Win' in file_name:
+            elif '032.reproj' in file_name:
                 intermediate = new_file_name + 'Feb'
 
             # to avoid conflicts with the value '060'
-            elif '060.Win' in file_name or '061.Win' in file_name:
+            elif '060.reproj' in file_name or '061.reproj' in file_name:
                 intermediate = new_file_name + 'Mar'
 
             # to avoid conflicts with the value '091'
-            elif '091.Win' in file_name or '092.Win' in file_name:
+            elif '091.reproj' in file_name or '092.reproj' in file_name:
                 intermediate = new_file_name + 'Apr'
 
-            elif '121.Win' in file_name or '122.Win' in file_name:
+            elif '121.reproj' in file_name or '122.reproj' in file_name:
                 intermediate = new_file_name + 'May'
 
-            elif '152.Win' in file_name or '153.Win' in file_name:
+            elif '152.reproj' in file_name or '153.reproj' in file_name:
                 intermediate = new_file_name + 'Jun'
 
-            elif '182.Win' in file_name or '183.Win' in file_name:
+            elif '182.reproj' in file_name or '183.reproj' in file_name:
                 intermediate = new_file_name + 'Jul'
 
-            elif '213.Win' in file_name or '214.Win' in file_name:
+            elif '213.reproj' in file_name or '214.reproj' in file_name:
                 intermediate = new_file_name + 'Aug'
 
-            elif '244.Win' in file_name or '245.Win' in file_name:
+            elif '244.reproj' in file_name or '245.reproj' in file_name:
                 intermediate = new_file_name + 'Sep'
 
-            elif '274.Win' in file_name or '275.Win' in file_name:
+            elif '274.reproj' in file_name or '275.reproj' in file_name:
                 intermediate = new_file_name + 'Oct'
 
-            elif '305.Win' in file_name or '306.Win' in file_name:
+            elif '305.reproj' in file_name or '306.reproj' in file_name:
                 intermediate = new_file_name + 'Nov'
 
-            elif '335.Win' in file_name or '336.Win' in file_name:
+            elif '335.reproj' in file_name or '336.reproj' in file_name:
                 intermediate = new_file_name + 'Dec'
 
             # to deal with shapefiles or tifs:
             final = ''
 
-            if file_name.endswith('.gz'):
+            if file_name.endswith('.tiff'):
 
-                final = intermediate + '.gz'
-
-            elif file_name.endswith('.tif'):
-
-                final = intermediate + '.tif'
+                final = intermediate + '.tiff'
 
             else:
 
@@ -110,7 +106,7 @@ def Modis_nc(year, current_directory):
 def deleter(year, selected_month_codes, current_directory):
 
     # Setting the directory and the selected year.
-    fire_season = current_directory + "\\Data\\MODIS\\" + str(year)
+    fire_season = current_directory + "\\Data\\Initial\\MODIS\\Reprojected\\" + str(year)
 
     for file_name in os.listdir(fire_season):
         found = False
@@ -128,14 +124,15 @@ def deleter(year, selected_month_codes, current_directory):
     print("Fire season months for year "+ str(year)+" successfully selected!\n")
 
 # function to clip the raster images based on a polygon for the selected region of interest
+
 def clipper(year, current_directory):
 
     # setting the directory and the selected year.
-    name_change = current_directory + "\\Data\\MODIS\\" + str(year)
+    name_change = current_directory + "\\Data\\Initial\\MODIS\\Reprojected\\" + str(year)
     print("\nYear = " + str(year))
 
     # make a new directory to hold the clipped data:
-    clip_dir = current_directory + "\\Data\\Modis_clipped\\" + str(year) + "\\"
+    clip_dir = current_directory + "\\Data\\Intermediate\\Modis_clipped\\" + str(year) + "\\"
 
     # check if the clip_directory already exists.
     if os.path.exists(clip_dir):
@@ -149,19 +146,18 @@ def clipper(year, current_directory):
 
     # loop over each file in the year directory
     for renamed_file in os.listdir(name_change):
-
         # Let's get the names
         year_month = os.path.basename(renamed_file)
-        # Remove the last four characters (because the suffix is '.tif')
-        year_month = year_month[:-4]
+        # Remove the last four characters (because the suffix is '.tiff')
+        year_month = year_month[:-5]
 
         # First lets navigate the directory to locate the shape file.
         # In this case we use portugal.
 
-        shp_file_path = current_directory + "\\Data\\boundaries\\portugal.shp"
+        shp_file_path = current_directory + "\\Data\\initial\\boundaries\\portugal_20790\\portugal_20790.shp"
 
         # set the output as the clip dir.
-        output_clipped_path = clip_dir + year_month+".tif"
+        output_clipped_path = clip_dir + year_month+".tiff"
 
         with fiona.open(shp_file_path, "r") as clip_shp:
             shapes = [feature["geometry"] for feature in clip_shp]
