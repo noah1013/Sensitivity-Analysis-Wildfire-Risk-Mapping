@@ -18,6 +18,8 @@ HDF_path = current_directory + "\\Data\\Initial\\MODIS\\HDF"
 
 # first lets create a new directory to contain the extracted sub-data in TIFF format:
 new_dir = current_directory + "\\Data\\Initial\\MODIS\\TIFF"
+
+
 os.makedirs(new_dir)
 
 # iterate through the folders inside the HDF file.
@@ -69,6 +71,8 @@ for window in os.listdir(HDF_path):
         dataset = None
 
     print("\n Sub-Data for MODIS product " + window_code + " successfully extracted.\n")
+    
+
 
 if len(os.listdir(HDF_path)) > 1:
 
@@ -79,6 +83,9 @@ if len(os.listdir(HDF_path)) > 1:
     # create a new directory to hold the merged data.
 
     merged_directory = current_directory + "\\Data\\Initial\\MODIS\\merged"
+
+
+
     os.makedirs(merged_directory)
 
     for raster1, raster2 in zip(os.listdir(window_path_list[0]), os.listdir(window_path_list[1])):
@@ -160,6 +167,8 @@ if len(os.listdir(HDF_path)) > 1:
             break
 
     print("\nMerge complete")
+    
+
 
     # reprojecting
     print("\nReprojecting raster to the CRS of the Area of Interest.\n")
