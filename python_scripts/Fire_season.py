@@ -1,6 +1,14 @@
 import tkinter as tk
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-def generate_UI():
+# generates a user interface to select the fire seasons months.
+# his also has a graph for each year which corresponds to the number of burnt pixels per month in our AOI
+# the graph is embedded into the user interface above the buttons.
+
+# inspiration and code adapted from: cosine1509 (2020)
+# found at: https://www.geeksforgeeks.org/how-to-embed-matplotlib-charts-in-tkinter-gui/
+
+def generate_UI(fig):
 
     def button_click(month, month_code):
         selected_months.append(month)
@@ -17,10 +25,17 @@ def generate_UI():
         label.config(text=', '.join(selected_months))
 
     def close_window():
+        window.quit()  # force end the main loop
         window.destroy()
 
-    # Create the main window
+
+    # create the main window
     window = tk.Tk()
+
+    # embed the matplotlib figure on a canvas in the tkinter window
+    canvas = FigureCanvasTkAgg(fig, master=window)
+    canvas_widget = canvas.get_tk_widget()
+    canvas_widget.pack(pady=20)
 
     months = ['January', 'February', 'March', 'April',
               'May', 'June', 'July', 'August',
@@ -33,11 +48,11 @@ def generate_UI():
     selected_months = []
     selected_month_codes = []
 
-    # Create the label for the instruction
+    # create the label for the instruction
     instruction_label = tk.Label(window, text="Please select the months that correspond to the fire season")
     instruction_label.pack(pady=10)
 
-    # Create the buttons
+    # create the buttons
     buttons_frame = tk.Frame(window)
     buttons_frame.pack()
 
@@ -46,19 +61,19 @@ def generate_UI():
                            command=lambda m=month, c=month_codes[i]: button_click(m, c))
         button.grid(row=i // 4, column=i % 4, padx=5, pady=5)
 
-    # Create the "Delete Last Month" button
+    # create a button to delete the previous month
     delete_button = tk.Button(window, text="Delete Previous Month", command=delete_last_month)
     delete_button.pack(pady=5)
 
-    # Create the label for the selected months
+    # create a label for the selected months
     selected_label = tk.Label(window, text="Selected months:")
     selected_label.pack()
 
-    # Create the label to show the selected months
+    # create a label to show the selected months
     label = tk.Label(window, text='')
     label.pack()
 
-    # Create the button to close the window:
+    # create a button to close the window:
 
     finish = tk.Button(window, text="Finish", command=close_window)
     finish.pack(pady=10)
