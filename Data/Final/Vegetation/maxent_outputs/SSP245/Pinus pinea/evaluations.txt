@@ -1,0 +1,20 @@
+Model Evaluation for train set
+
+Tree Species = Pinus pinea
+
+class          : ModelEvaluation 
+n presences    : 4003 
+n absences     : 11482 
+AUC            : 0.9018976 
+cor            : 0.6456098 
+max TPR+TNR at : 0.4818175 
+
+
+Model Evaluation for test set
+
+class          : ModelEvaluation 
+n presences    : 1721 
+n absences     : 11482 
+AUC            : 0.9014121 
+cor            : 0.5374733 
+max TPR+TNR at : 0.4902169 

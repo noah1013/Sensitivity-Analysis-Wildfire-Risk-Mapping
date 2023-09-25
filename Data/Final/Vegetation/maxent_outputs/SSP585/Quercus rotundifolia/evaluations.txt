@@ -1,0 +1,20 @@
+Model Evaluation for train set
+
+Tree Species = Quercus rotundifolia
+
+class          : ModelEvaluation 
+n presences    : 6872 
+n absences     : 19798 
+AUC            : 0.9248117 
+cor            : 0.7017235 
+max TPR+TNR at : 0.3881554 
+
+
+Model Evaluation for test set
+
+class          : ModelEvaluation 
+n presences    : 2947 
+n absences     : 19798 
+AUC            : 0.927387 
+cor            : 0.5952417 
+max TPR+TNR at : 0.3986699 
