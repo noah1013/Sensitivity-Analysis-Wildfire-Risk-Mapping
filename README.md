@@ -153,8 +153,11 @@ R code can be found in "R_scripts"
 ## Relevant Hardware requirements.
 
 Storage: 2 TB SSD (most of which was used up by the raw climate data which is not on this repository).
-RAM: 64 GB DDR - 3200 SODIMM 
+
+RAM: 64 GB DDR - 3200 SODIMM.
+
 Processor: AMD Ryzen 9 5900HX with Radeon Graphics, 3301 Mhz, 8 Core(s), 16 Logical Processor(s).
+
 GPU: Nvidia GeForce RTX 3060 (Laptop).
 
 
