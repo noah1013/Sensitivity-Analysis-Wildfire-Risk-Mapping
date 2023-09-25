@@ -34,10 +34,11 @@ The version of R-studio used to run the R scripts is as follows:
 RStudio 2023.06.1+524 "Mountain Hydrangea" Release (547dcf861cac0253a8abb52c135e44e02ba407a1, 2023-07-07) for windows
 Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) RStudio/2023.06.1+524 Chrome/110.0.5481.208 Electron/23.3.0 Safari/537.36
  
-Important Note: The programs here are very specific to the area of interest and the temporal period of study.
-                If the programs were to be adapted to study another region or time-frame,  the code will need to be tweaked. 
+Important Note: 
+The programs here are very specific to the area of interest and the temporal period of study.
+If the programs were to be adapted to study another region or time-frame,  the code will need to be tweaked. 
 
-                Further, there may be bugs and  errors that arise during the data processing steps due when deployed on another machine. However, the machine learning section should work fine assuming that the correct libraries are installed and the same input data is used. 
+Further, there may be bugs and  errors that arise during the data processing steps due when deployed on another machine. However, the machine learning section should work fine assuming that the correct libraries are installed and the same input data is used. 
 
 ## 2. The order of the scripts.
 
