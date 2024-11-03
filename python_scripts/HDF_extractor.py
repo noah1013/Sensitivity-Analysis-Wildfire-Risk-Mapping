@@ -1,13 +1,14 @@
 # python script to extract the data from the HDF file.
-# runs on python 3.10 and uses osgeo
+# Created using Python 3.10 and uses osgeo
+# Updated using Python 3.12
 
-from osgeo import gdal
-from osgeo import ogr
 import os
+import shutil
 
+from osgeo import gdal, ogr
 from Utilities import year_lister
 
-current_directory = os.path.dirname(os.getcwd())
+current_directory = os.getcwd()
 
 print("\nProject directory: "
       "\n"
@@ -19,6 +20,11 @@ HDF_path = current_directory + "\\Data\\Initial\\MODIS\\HDF"
 # first lets create a new directory to contain the extracted sub-data in TIFF format:
 new_dir = current_directory + "\\Data\\Initial\\MODIS\\TIFF"
 
+if os.path.exists(new_dir):
+    try:
+        shutil.rmtree(new_dir)
+    except Exception as e:
+        print(f"Error removing directory: {e}")
 
 os.makedirs(new_dir)
 
@@ -29,7 +35,6 @@ os.makedirs(new_dir)
 window_path_list = []
 
 for window in os.listdir(HDF_path):
-
     window_path = HDF_path + "\\" + window
 
     # save the name
@@ -70,21 +75,23 @@ for window in os.listdir(HDF_path):
         selected_subdataset = None
         dataset = None
 
-    print("\n Sub-Data for MODIS product " + window_code + " successfully extracted.\n")
+    print("\nSub-Data for MODIS product " + window_code + " successfully extracted.\n")
     
 
 
 if len(os.listdir(HDF_path)) > 1:
-
     print("\nYour study region falls on " + str(len(os.listdir(HDF_path))) + " MODIS windows.\n")
 
     print("These products will now be stitched together.")
 
-    # create a new directory to hold the merged data.
+    # Create a new directory to hold the merged data.
 
     merged_directory = current_directory + "\\Data\\Initial\\MODIS\\merged"
-
-
+    if os.path.exists(merged_directory):
+        try:
+            shutil.rmtree(merged_directory)
+        except Exception as e:
+            print(f"Error removing directory: {e}")
 
     os.makedirs(merged_directory)
 
@@ -109,15 +116,9 @@ if len(os.listdir(HDF_path)) > 1:
             # make a new directory to hold the data:
             merge_year_dir = current_directory + "\\Data\\Initial\\MODIS\\merged\\" + folder_name
 
-            if os.path.exists(merge_year_dir):
-                # this should iterate 12 times. (12 months in a year)
-                # we only really want one folder for each year.
-                # therefore, do nothing
-                pass
-
-            else:
-                # if the folder does not exist, make a new one.
-                os.makedirs(merge_year_dir)
+            # this should iterate 12 times. (12 months in a year)
+            # we only really want one folder for each year.
+            os.makedirs(merge_year_dir, exist_ok = True)
 
             # get the paths for both the rasters and open it using gdal.
             MODIS_1 = gdal.Open(window_path_list[0] + "\\" + raster1)
@@ -134,14 +135,18 @@ if len(os.listdir(HDF_path)) > 1:
 
             output_path = merge_year_dir + "\\" + merged + ".merged.tif"
 
+            # options = {"compressionOptions": "COMPRESS=LZW",
+            #            "TILED" : "YES"}
+            
             # merge the rasters using gdal.Warp()
+            options = gdal.WarpOptions(creationOptions = ["COMPRESS=LZW", "TILED=YES"])
+            
             g = gdal.Warp(output_path,
                           mosaic,
-                          format="GTiff",
-                          options=["COMPRESS=LZW",
-                                   "TILED=YES"]
+                          format = "GTiff",
+                          options = options
                           )
-
+            
             # close the file and flush to disk
             g = None
 
@@ -177,12 +182,16 @@ if len(os.listdir(HDF_path)) > 1:
 
     first_year, last_year = year_lister(merged_directory)
 
+    reproj_dir = current_directory + "\\Data\\Initial\\MODIS\\Reprojected"
+    if os.path.exists(reproj_dir):
+        try:
+            shutil.rmtree(reproj_dir)
+        except Exception as e:
+            print(f"Error removing directory: {e}")
+
+    
     for i in range(first_year, (last_year + 1)):
-
         to_reproj_dir = merged_directory + "\\" + str(i)
-
-
-
         for to_reproj in os.listdir(to_reproj_dir):
 
             # get the name of the file:
@@ -192,16 +201,8 @@ if len(os.listdir(HDF_path)) > 1:
             # create a new directory specific to the year:
             # make a new directory to hold the data:
             reproj_dir = current_directory + "\\Data\\Initial\\MODIS\\Reprojected\\" + str(i)
-
-            if os.path.exists(reproj_dir):
-                # this should iterate 12 times. (12 months in a year)
-                # we only really want one folder for each year.
-                # therefore, do nothing
-                pass
-
-            else:
-                # if the folder does not exist, make a new one.
-                os.makedirs(reproj_dir)
+                
+            os.makedirs(reproj_dir, exist_ok = True)          
 
             # open the shapefile for the AOI
             AOI_path = current_directory + "\\Data\\initial\\boundaries\\portugal_20790\\portugal_20790.shp"
@@ -230,12 +231,10 @@ if len(os.listdir(HDF_path)) > 1:
 
 
 elif len(os.listdir(HDF_path)) > 2:
-
     print("\nYour study region falls on " + str(len(os.listdir(HDF_path))) + "MODIS windows.\n")
 
     print("\n This code is not designed to deal with more than 2 rasters.\n"
           "Please make alterations on line 61.")
-
 else:
     pass
 

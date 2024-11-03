@@ -4,9 +4,9 @@
 
 library(ncdf4) # package for netcdf manipulation
 library(raster) # package for raster manipulation
-library(rgdal) # package for geospatial analysis
+# library(rgdal) # package for geospatial analysis
 library(ggplot2) # package for plotting
-library(rstudioapi) # automatically get the directory
+# library(rstudioapi) # automatically get the directory
 library(stringr)
 library(dismo)
 
@@ -16,7 +16,7 @@ gc()
 
 
 # set the directory:
-path <- dirname(getActiveDocumentContext()$path)
+path <- getwd()
 # If the data is not being loaded, it can be accessed via the 'Data' Folder.
 setwd(path)
 
@@ -30,25 +30,27 @@ generate_biovars <- function(ssp_scenario){
   # just to separate the scenarios for processing
   if (ssp_scenario == 245){
     
-    SSP_dir <- paste0(dirname(path), "/Data/Intermediate/climate_data/SSP245")
+    SSP_dir <- paste0(path, "/Data/Intermediate/climate_data/SSP245")
 
-    } else if (ssp_scenario == 585) {
-    
-      SSP_dir <- paste0(dirname(path), "/Data/Intermediate/climate_data/SSP585")
+  } else if (ssp_scenario == 585) {
+  
+    SSP_dir <- paste0(path, "/Data/Intermediate/climate_data/SSP585")
 
-      } # end of else if statement
+  } # end of else if statement
   
   tmax_dir <- paste0(SSP_dir, "/tasmax")
   tmin_dir <- paste0(SSP_dir, "/tasmin")
   pr_dir <- paste0(SSP_dir, "/pr")
   
   # create an output directory to hold the bioclimate variables:
-  bioclim_output_dir <- paste0(dirname(path), 
+  bioclim_output_dir <- paste0(path, 
                                "/Data/Intermediate/BioClim/SSP", 
                                as.character(ssp_scenario))
   
-  dir.create(bioclim_output_dir,
-             recursive = TRUE)
+  if (dir.exists(bioclim_output_dir)) {
+    unlink(bioclim_output_dir, recursive = TRUE, force = TRUE)
+  } 
+  dir.create(bioclim_output_dir, recursive = TRUE)
   
   tmax_year <- list.files(tmax_dir)
   tmin_year <- list.files(tmin_dir)
@@ -136,11 +138,11 @@ average_biovars <- function(start,
   
   if (ssp_scenario == 245){
     
-    bc_dir <- paste0(dirname(path), "/Data/Intermediate/BioClim/SSP245")
+    bc_dir <- paste0(path, "/Data/Intermediate/BioClim/SSP245")
   
     } else if (ssp_scenario == 585){
     
-      bc_dir <- paste0(dirname(path), "/Data/Intermediate/BioClim/SSP585")
+      bc_dir <- paste0(path, "/Data/Intermediate/BioClim/SSP585")
   
       }
     
@@ -293,14 +295,6 @@ average_biovars <- function(start,
     calc(stack, fun = mean)
     })
   
-  # create a new directory to hold this:
-  averaged_output <- paste0(dirname(path), 
-                            "/Data/Intermediate/Averaged_data")
-  
-  if (!dir.exists(averaged_output)){
-    dir.create(averaged_output)
-  }
-  
   print(averaged_output)
   
   avg_bioclim_output <- paste0(averaged_output,
@@ -352,20 +346,26 @@ generate_biovars(245)
 generate_biovars(585)
 
 # average the biovars over our study region 
+averaged_output <- paste0(path, "/Data/Intermediate/Averaged_data")
+  
+if (dir.exists(averaged_output)) {
+  unlink(averaged_output, recursive = TRUE, force = TRUE)
+} 
+dir.create(averaged_output)
+
 
 # 1. historical SSP245:
-average_biovars(start=2001,
-                end = 2021,
+average_biovars(start=2000,
+                end = 2014,
                 ssp_scenario = 245)
 
 # 2. future SSP245
-average_biovars(start=2080,
+average_biovars(start=2085,
                 end = 2100,
                 ssp_scenario = 245)
 
-# 2. future SSP585
-average_biovars(start=2080,
-                end = 2100,
-                ssp_scenario = 585)
-
+# # 2. future SSP585
+# average_biovars(start=2080,
+#                 end = 2100,
+#                 ssp_scenario = 585)
 
