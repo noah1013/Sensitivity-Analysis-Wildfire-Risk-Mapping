@@ -20,5 +20,5 @@ def main():
     generate_paths(path, 245)
     
 
-if __name__ == main():
+if __name__ == "__main__":
     main()
