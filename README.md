@@ -19,20 +19,8 @@ By Trisung Dorji.
 
 Two programming languages, Python and R, were used to clean and process the data as there were only some specific packages available to R that python did not have. 
 
-Note: Three versions of Python in different environments been used due to clashes with various libraries:
-
-Data preparation: Version 3.8 & 3.10
-The versions are written on the top of the pages for the data prepartion scripts.
-It is recommended to run the python scripts on an IDE such as PyCharm.
-
-Machine Learning: Version 3.9.12
-The Graph Convolution Network is written exclusively in Python and is provided in a Jupyter notebook for your convenience. As such, it's recommended to run the code within a Jupyter notebook environment.
-
-
-The version of R-studio used to run the R scripts is as follows:
-
-RStudio 2023.06.1+524 "Mountain Hydrangea" Release (547dcf861cac0253a8abb52c135e44e02ba407a1, 2023-07-07) for windows
-Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) RStudio/2023.06.1+524 Chrome/110.0.5481.208 Electron/23.3.0 Safari/537.36
+Python: 3.12.6
+R: 4.4.1
  
 Important Note: 
 The programs here are very specific to the area of interest and the temporal period of study.
