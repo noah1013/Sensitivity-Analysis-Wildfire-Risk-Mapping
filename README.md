@@ -19,8 +19,8 @@ By Trisung Dorji.
 
 Two programming languages, Python and R, were used to clean and process the data as there were only some specific packages available to R that python did not have. 
 
-Python: 3.12.6
-R: 4.4.1
+* Python: 3.12.6
+* R: 4.4.1
  
 Important Note: 
 The programs here are very specific to the area of interest and the temporal period of study.
