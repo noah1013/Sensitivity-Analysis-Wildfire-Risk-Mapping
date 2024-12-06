@@ -6,6 +6,7 @@ Repository for code and data involved in the UCL CEGE MSc Research Project:
 
 Supervised by Dr Augustin Guibaud.
 Originally by Trisung Dorji.
+Updated and expanded by Noah Tobinsky
 
 ## Contents.
 
