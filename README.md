@@ -34,34 +34,32 @@ The stages below show the individual R-scripts and python scripts that were used
 
 They must be run in the order listed below.
 
-Note that the first 2 stages are only data pre-processing stages. The machine learning aspect of the project is in Stage 3 & 4. If you only want to test the machine learning code only, all the data is already processed and ready to be ingested by the models. 
+Note that the first 3 stages are only data pre-processing stages. The machine learning aspect of the project is in Stage 4. If you only want to test the machine learning code only, all the data is already processed and ready to be ingested by the models. A copy of this data is provided as many of the processed data will be overwritten during the first 3 stages. 
 
 Since the climate data is too large, it won't be included in this repository. However, the final versions of all the input variables have been included so the the machine learning algorithms should run without issues.
 
 The machine learning code can be found in "python_scripts/ML"
 R code can be found in "R_scripts"
 
-### Stage 1: Generating reference polygons, Opening the PFT dataset, conversion of MODIS dataset and selecting wildfire seasons.
+### Stage 1: Removing unnecessary files, Generating Cmip6 data directory structure, Combining Cmip6 daily data to yearly data 
+1. Directory_Remover.py: Remove any accidental directories and/or files remaining after pushing the code. 
+2. Cmip6_Directory_Creator.py: Generate the directory structure for the Cmip6 climate data. 
+3. Cmip6_Data_Merger.py: Combines daily Cmip6 yearly data into yearly .nc data files. 
+
+### Stage 2: Generating reference polygons, Opening the PFT dataset, conversion of MODIS dataset and selecting wildfire seasons.
 
 1. reference_data.R: create the spatial grid polygon (1km x 1km resolution) reference for our study region.
-3. CCI_LC_NC_opener.R: opens the PFT dataset (derived from the CCI-LC dataset) which is in netCDF format.
 2. HDF_extractor.py: Pre-processing of the MODIS dataset.
-3. main.py: selecting the fire season months.
+3. FireSeasonSelector.py: selecting the fire season months.
 
-### Stage 2: Preparing climate data, resampling all of our input features and aligning them.
+### Stage 3: Preparing climate data, resampling all of our input features and aligning them.
 
 1. Cmip6_NC_opener.R: Opens the CMIP6 data which is also in netCDF format.
 2. Bioclim.R: Derives bioclimatic variables from the CMIP6 dataset.
-3. miracle_aligner.py: resamples all of the data to 1 by 1 km resolution using the reference and then aligns these grids so that they can be used for analysis later. 
 
-### Stage 3: Maxent Species Distribution Modelling.
+### Stage 4: Maxent Species Distribution Modelling.
 
 1. MaxEnt.R: Maxent algorithm for species distribution modelling.
-
-### Stage 4: Graph Convolution Network for wildfire risk mapping.
-
-1. GCN-maxent-ROC.ipynb: GCN for the maxent-WSM.
-2. GCN-cci-lc-ROC.ipynb: GCN for the PFT-WSM.
 
 
 ## 3. Required libraries for Python scripts.
@@ -86,6 +84,8 @@ R code can be found in "R_scripts"
 |random | 3.9.12 |
 |rasterio| 1.3.7 |
 |shapely| 2.0.1 |
+
+NOTE: If there are issues using the provided requirements.txt to install the osgeo package, a python wheel for the osgeo package is included from https://github.com/cgohlke/geospatial-wheels/releases/tag/v2024.9.22.  
 
 ### Visualisastion
 
