@@ -5,7 +5,7 @@ Repository for code and data involved in the UCL CEGE MSc Research Project:
 "A Machine Learning Approach to Long-term Wildfire Susceptibility Mapping in Portugal."
 
 Supervised by Dr Augustin Guibaud.
-By Trisung Dorji.
+Originally by Trisung Dorji.
 
 ## Contents.
 
