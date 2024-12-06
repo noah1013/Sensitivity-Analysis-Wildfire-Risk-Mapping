@@ -26,7 +26,8 @@ portugal_path <- paste0(path, "/Data/Initial/boundaries/portugal_20790/portugal_
 portugal <- st_read(portugal_path, layer = "portugal_20790")
 
 #### GENERATING REFERENCE RASTERS AND POLYGOS ####
-rast_grid <- raster(portugal, resolution = 1000, vals = 1)
+rast_grid <- raster(portugal, resolution = 25000, vals = 1)
+# rast_grid <- raster(portugal, resolution = 1000, vals = 1)
 grid_centres <- as(rast_grid, "SpatialPoints") # set the raster as grid center 
 
 # clip it to follow the shape of portugal

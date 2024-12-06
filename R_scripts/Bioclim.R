@@ -137,17 +137,12 @@ average_biovars <- function(start,
                             ssp_scenario){
   
   if (ssp_scenario == 245){
-    
     bc_dir <- paste0(path, "/Data/Intermediate/BioClim/SSP245")
-  
-    } else if (ssp_scenario == 585){
-    
-      bc_dir <- paste0(path, "/Data/Intermediate/BioClim/SSP585")
-  
-      }
+  } else if (ssp_scenario == 585){
+    bc_dir <- paste0(path, "/Data/Intermediate/BioClim/SSP585")
+  }
     
   bc_folders <- list.files(bc_dir, full.names = TRUE)
-  
   
   # this is a bit of a shit way to do this but currently i can't 
   # think of anything else: 
@@ -188,7 +183,6 @@ average_biovars <- function(start,
         bioclim_list <- list.files(folder,
                                    full.names = TRUE)
 
-        
         # now iterate over each bioclimatic variable and append them to their 
         # respective key in the list.
         
@@ -293,9 +287,9 @@ average_biovars <- function(start,
   # now we just need to average it over the years:
   avg_bioclims <- lapply(bioclim_rast_stack, function(stack) {
     calc(stack, fun = mean)
-    })
+  })
   
-  print(averaged_output)
+  # print(averaged_output)
   
   avg_bioclim_output <- paste0(averaged_output,
                                "/",
@@ -314,6 +308,10 @@ average_biovars <- function(start,
   # loop over every key in the list and save the raster in the Bioclim average
   # directory:
   
+  # Make sure the raster has the same extent and dimensions as the topography
+  topography <- list.files(paste0(path, "/Data/Final/Topography/Topo_processed"), full.names = TRUE)
+
+
   for (key in names(avg_bioclims)){
     
     cat(paste0("\nSaving ", key , " averaged over years ", start, "-", end, "." ))
@@ -328,6 +326,8 @@ average_biovars <- function(start,
     
     # extract the raster from that iteration  
     bioclim_avg_raster <- avg_bioclims[[key]]
+
+    # bioclim_avg_raster <- projectRaster(bioclim_avg_raster, raster::raster(topography[[1]]), method = "ngb")
     
     raster::writeRaster(bioclim_avg_raster,
                         filename = paste0(final_bioclim_output_path, 
@@ -337,13 +337,13 @@ average_biovars <- function(start,
                                           start, "-", end,
                                           ".tif"),
                         overwrite = TRUE)
-      }
+    }
   
   } # end of average_biovars function
  
 # lets get the biovars for each year using the custom function:
 generate_biovars(245)
-generate_biovars(585)
+# generate_biovars(585)
 
 # average the biovars over our study region 
 averaged_output <- paste0(path, "/Data/Intermediate/Averaged_data")
@@ -355,12 +355,12 @@ dir.create(averaged_output)
 
 
 # 1. historical SSP245:
-average_biovars(start=2000,
+average_biovars(start=2001,
                 end = 2014,
                 ssp_scenario = 245)
 
 # 2. future SSP245
-average_biovars(start=2085,
+average_biovars(start=2087,
                 end = 2100,
                 ssp_scenario = 245)
 

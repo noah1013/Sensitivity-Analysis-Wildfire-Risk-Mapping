@@ -39,8 +39,9 @@ def main():
     for var in {"hurs", "pr", "tas", "tasmax", "tasmin", "wind"}: 
         path = os.path.join(os.getcwd(), "Data/Initial/nc_files/", var)
         
+        # Enter the year bounds for the historical and future ssp scenario data 
         merge_data(path, 1994, 2014, "245", var)
-        # merge_data(path, 2080, 2100, "245", var)
+        # merge_data(path, 2087, 2100, "245", var)
 
 if __name__ == "__main__":
     main()

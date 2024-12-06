@@ -7,19 +7,21 @@
 
 library(raster)
 library(dismo)
-library(rgeos)
-library(rstudioapi) # automatically get the directory
+# library(rgeos)
+# library(rstudioapi) # automatically get the directory
 library(dplyr)
 library(sf)
 library(tmap)
+library(ggplot2)
 
+Sys.setenv(JAVA_HOME='C:\\Program Files\\Java\\jdk-23') # for 64-bit version
 
 # clear the R environment
 rm(list = ls())
 gc()
 
 # set the directory:
-path <- dirname(getActiveDocumentContext()$path)
+path <- getwd()
 # if the data is not being loaded, it can be accessed via the 'Data' Folder.
 setwd(path)
 
@@ -29,25 +31,35 @@ dest_dir <- system.file("java", package = "dismo")
 dir.exists(dest_dir) 
 
 # define the source and destination file paths
-src_file <- paste0(path, "/maxent/maxent.jar")
+src_file <- paste0(path, "/R_scripts/maxent/maxent.jar")
 dest_file <- file.path(dest_dir, "maxent.jar")
-
 
 # copy the maxent.jar into the dismo package so that it can be accessed.
 file.copy(src_file, dest_file, overwrite = TRUE)
 
-
 # function to run maxent 
 run_maxent <- function (SSP_scenario) {
   
+  # # import present/historical biclimatic variables.
+  # historical_bioclim_path <- list.files(paste0(dirname(path), "/Data/Final/Bioclim_avg/SSP",
+  #                                              as.character(245)),
+  #                            full.names = TRUE)
+  
+  # # we will define a seperate path for the future data:
+  # future_bioclim_path <- list.files(paste0(dirname(path), "/Data/Final/Bioclim_avg/SSP",
+  #                                          as.character(SSP_scenario)),
+  #                            full.names = TRUE)
+
   # import present/historical biclimatic variables.
-  historical_bioclim_path <- list.files(paste0(dirname(path), "/Data/Final/Bioclim_avg/SSP",
-                                               as.character(245)),
+  historical_bioclim_path <- list.files(paste0(path, "/Data/Intermediate/Averaged_data/SSP",
+                                               as.character(245), 
+                                               "/Bioclim_avg"),
                              full.names = TRUE)
   
   # we will define a seperate path for the future data:
-  future_bioclim_path <- list.files(paste0(dirname(path), "/Data/Final/Bioclim_avg/SSP",
-                                           as.character(SSP_scenario)),
+  future_bioclim_path <- list.files(paste0(path, "/Data/Intermediate/Averaged_data/SSP",
+                                           as.character(SSP_scenario),
+                                           "/Bioclim_avg"),
                              full.names = TRUE)
   
   # instantiate two empty lists to contain the file paths for the 
@@ -69,7 +81,7 @@ run_maxent <- function (SSP_scenario) {
         
       # look for the file which contains present climatic variables.
       # this is represented by the era
-      if (grepl("2001-2021", basename(file))) {
+      if (grepl("2001-2014", basename(file))) {
           
         # store the file path of this 
         present_bioclim_list <- append(present_bioclim_list, file)
@@ -87,39 +99,54 @@ run_maxent <- function (SSP_scenario) {
     # loop through each folder in the parent directory.
     for (file_fut in future_bioclim_file_loc) {
       
-      print(file_fut)
+      # print(file_fut)
       # look for the file which contains the target future climate variables
       # and store that in the futre_bioclim_list
     
-      if (grepl("2080-2100", basename(file_fut))) {
-          
+      if (grepl("2087-2100", basename(file_fut))) {
         future_bioclim_list <- append(future_bioclim_list, file_fut)
-
-        }
       }
-    } # end of future list looper
+    }
+  } # end of future list looper
   
   # import topographical variables.
-  topography <- list.files(paste0(dirname(path), 
-                                  "/Data/Final/Topography/Topo_processed"),
-                           full.names = TRUE)
+  topography <- list.files(paste0(path, "/Data/Final/Topography/Topo_processed"), full.names = TRUE)
   
   # import the river proximity map:
-  rivers <- list.files(paste0(dirname(path), 
-                              "/Data/Final/rivers/portugal_proximity_river_map"),
-                       full.names = TRUE)
-  
+  rivers <- list.files(paste0(path, "/Data/Final/rivers/portugal_proximity_river_map"), full.names = TRUE)
+
+  # present_projected_rasters <- list()
+  # for (bioclim in present_bioclim_list){
+  #   # crs(bioclim) <- crs(topography[[1]])
+  #   projected <- projectRaster(raster::raster(bioclim), raster::raster(topography[[1]]), method = "ngb")
+  #   present_projected_rasters[[length(present_projected_rasters) + 1]] <- projected
+  # }
+
+  ref_raster <- raster(rivers[1])  
+
+  #deal with present bioclim_list
+  present_projected_rasters <- lapply(present_bioclim_list, function(file) {
+    raster_file <- raster(file) 
+    if (!compareCRS(raster_file, ref_raster)) {
+      raster_file <- projectRaster(raster_file, crs = crs(ref_raster))
+    }
+
+    resample(raster_file, ref_raster, method = "bilinear")  
+  })
+
+
   # create a stack of the variables for all the raster data.
-  bioclim_stack <- raster::stack(c(present_bioclim_list, topography, rivers))
+  bioclim_stack <- raster::stack(c(present_projected_rasters, topography, rivers))
+  # bioclim_stack <- raster::stack(c(present_bioclim_list, topography, rivers)) ORIGINAL
   
   # remove years from layer names in bioclim_stack (training data)
   # this is so that the model can be used to make predictions on future data.
-  names(bioclim_stack) <- sub("_2001.2021", "", names(bioclim_stack))
+  names(bioclim_stack) <- sub("_2001.2014", "", names(bioclim_stack))
   
   print(names(bioclim_stack))
   
   # lets get our CRS from our AOI shapefile:
-  portugal_path <- paste0(dirname(path), "/Data/Initial/boundaries/portugal_20790/portugal_20790.shp")
+  portugal_path <- paste0(path, "/Data/Initial/boundaries/portugal_20790/portugal_20790.shp")
   
   portugal <- st_read(portugal_path, layer = "portugal_20790")
   
@@ -127,7 +154,7 @@ run_maxent <- function (SSP_scenario) {
   st_crs(portugal)
   
   # GBIF data manipulation:
-  data_dir <- paste0(dirname(path), "/Data")
+  data_dir <- paste0(path, "/Data")
   
   occ_raw <- read.csv(paste0
                       (data_dir, "/Initial/vegetation/GBIF_Raw/NFI_2015.csv"), 
@@ -140,21 +167,19 @@ run_maxent <- function (SSP_scenario) {
                        "Acacia", "Pinus pinaster", "Pinus pinea")
   
   # create an output directory for the maxent outputs
-  output_directory_main <- paste0(dirname(path), "/Data/Final/Vegetation/maxent_outputs")
+  output_directory_main <- paste0(path, "/Data/Final/Vegetation/maxent_outputs")
   
   # create the directory
-  if (!dir.exists(output_directory_main)){
-    
-    dir.create(output_directory_main, recursive = TRUE)
-  
+  if (dir.exists(output_directory_main)){
+    unlink(output_directory_main, recursive = TRUE, force = TRUE)
   }
+  dir.create(output_directory_main, recursive = TRUE)
   
+
   output_directory <- paste0(output_directory_main, "/SSP", as.character(SSP_scenario))
   
   if (!dir.exists(output_directory)){
-    
     dir.create(output_directory)
-    
   }
   
   # now create a for loop to go over each tree species.
@@ -257,7 +282,7 @@ run_maxent <- function (SSP_scenario) {
                 filename=paste0(int_process_data, "/", names(bioclim_stack),".asc"), 
                 format="ascii", ## the output format
                 bylayer=TRUE, ## this will save a series of layers
-                overwrite=T)
+                overwrite = TRUE)
     
     # select random background points from the study region.
     # these random points are going to be the 'pseudo-absence' data points:
@@ -344,7 +369,6 @@ run_maxent <- function (SSP_scenario) {
       sink(paste0(mxent_output, '/results.txt'))
       print(results)
       sink()
-      
     }
     
     # example 1, project to study area [raster]
@@ -354,7 +378,8 @@ run_maxent <- function (SSP_scenario) {
     # lets save the raster output just in case:
     writeRaster(pred,
                 filename = paste0(mxent_output, "/present_PP_", tree, ".tif"),
-                format="GTIFF")
+                format="GTIFF",
+                overwrite = TRUE)
     
     
     # project with training occurrences [dataframes]
@@ -411,16 +436,33 @@ run_maxent <- function (SSP_scenario) {
     
     writeRaster(species_dist,
                 filename = paste0(mxent_output, "/present_TSS_", tree, ".tif"),
-                format="GTIFF")
+                format="GTIFF",
+                overwrite = TRUE)
     
     # lets try predicting for the future dataset:
     
     # create a stack of the bioclim variables on the future data
     
-    future_clim_stack <- raster::stack(c(future_bioclim_list, topography, rivers))
+    # NOAH OLD
+    # future_projected_rasters <- list()
+    # for (bioclim in future_bioclim_list){
+    #   projected <- projectRaster(raster::raster(bioclim), raster::raster(topography[[1]]), method = "ngb")
+    #   future_projected_rasters[[length(future_projected_rasters) + 1]] <- projected
+    # }
+
+    # Future Projections
+    future_projected_rasters <- lapply(future_bioclim_list, function(file) {
+      raster_file <- raster(file)
+      if (!compareCRS(raster_file, ref_raster)) {
+        raster_file <- projectRaster(raster_file, crs = crs(ref_raster))
+      }
+      resample(raster_file, ref_raster, method = "bilinear")
+    })
+
+    future_clim_stack <- raster::stack(c(future_projected_rasters, topography, rivers))
     
     # remove years from layer names in future_clim_stack (future data)
-    names(future_clim_stack) <- sub("_2080.2100", "", names(future_clim_stack))
+    names(future_clim_stack) <- sub("_2087.2100", "", names(future_clim_stack))
     
     # project to study area [raster]
     pred2 <- predict(mod, future_clim_stack)
@@ -428,28 +470,30 @@ run_maxent <- function (SSP_scenario) {
     
     writeRaster(pred2,
                 filename = paste0(mxent_output, "/future_PP_", tree, ".tif"),
-                format="GTIFF")
+                format="GTIFF",
+                overwrite = TRUE)
     
     future_species_dist <- pred2 >= thd2
     plot(future_species_dist, main = paste0("Binarized (future) - ", tree))
     
     writeRaster(future_species_dist,
                 filename = paste0(mxent_output, "/future_TSS_", tree, ".tif"),
-                format="GTIFF")
+                format="GTIFF",
+                overwrite = TRUE)
   
-    }
+  }
 
-  } # end of the run_maxent function.
+} # end of the run_maxent function.
 
 
 
 run_maxent(245)
-run_maxent(585)
+# run_maxent(585)
 
 
 
 # GBIF data plotting:
-data_dir <- paste0(dirname(path), "/Data")
+data_dir <- paste0(path, "/Data")
 
 occ_raw <- read.csv(paste0
                     (data_dir, "/Initial/vegetation/GBIF_Raw/NFI_2015.csv"), 
@@ -465,7 +509,6 @@ tree_species <- list("Quercus suber", "Quercus rotundifolia" ,
 species <- occ_raw %>% filter(verbatimScientificName == tree_species)
 
 #### plotting ##### 
-
 # Calculate the count and percentage for each species
 agg_df <- species %>%
   group_by(verbatimScientificName) %>%

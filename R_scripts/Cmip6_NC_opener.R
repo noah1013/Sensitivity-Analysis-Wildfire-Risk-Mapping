@@ -104,11 +104,13 @@ open_cmip6 <- function(timeframe) {
         } # end of sink (6) 
 
         # extract the name of the variable - if its pr its 4 else 5:
-        if (basename(folder) == 'pr') {
-          var_name <- names(cmip6$var)[2]
-        } else {
-          var_name <- names(cmip6$var)[3]
-        }
+        # if (basename(folder) == 'pr') {
+        #   var_name <- names(cmip6$var)[2]
+        # } else {
+        #   var_name <- names(cmip6$var)[3]
+        # }
+        var_name <- names(cmip6$var)[1]
+
 
         # extract lat and lon coords and time (in days from 1850-01-01: 00:00)
         lon <- ncvar_get(cmip6, "lon")
@@ -117,6 +119,8 @@ open_cmip6 <- function(timeframe) {
         
         
         # fillvalue and missing value is the same according to the meta data
+        print(var_name)
+
         fillvalue <- ncatt_get(cmip6, var_name, "missing_value")
         cat(paste0("\nMissing Value: ", fillvalue[2], "\n"))
 
@@ -146,10 +150,11 @@ open_cmip6 <- function(timeframe) {
         # define the years for aggregation:
         if (timeframe == "historical") {
           # years_of_interest <- lapply(list(1992:2021)[[1]], as.character) # TRISUNG OG CODE
-          years_of_interest <- lapply(list(2000:2014)[[1]], as.character)
+          years_of_interest <- lapply(list(2001:2014)[[1]], as.character)
+          # years_of_interest <- lapply(list(2001)[[1]], as.character)
         } else if (timeframe == 'future') {
           # years_of_interest <- lapply(list(2080:2100)[[1]], as.character) # TRISUNG OG CODE
-          years_of_interest <- lapply(list(2085:2100)[[1]], as.character) 
+          years_of_interest <- lapply(list(2087:2100)[[1]], as.character) 
         }
         
         # define bounding box - Portugal -10.27,36.52,-5.49,42.61
@@ -291,26 +296,30 @@ open_cmip6 <- function(timeframe) {
             
             
             # if we are dealing with pr (precipitation) then its variable 4
-            if (basename(folder) == 'pr') {
+            # if (basename(folder) == 'pr') {
               
-              # remember we are subsetting data to be memory efficient:
-              # so we are only extracting the netcdf file for our region of interest
-              # and of the current daily time slice that corresponds to our 
-              # month of interest.
+            #   # remember we are subsetting data to be memory efficient:
+            #   # so we are only extracting the netcdf file for our region of interest
+            #   # and of the current daily time slice that corresponds to our 
+            #   # month of interest.
               
-              data <- ncvar_get(cmip6, cmip6$var[[2]], 
-                                start = c(min(lon_ind), min(lat_ind), i), 
-                                count = c(length(lon_ind), length(lat_ind), 1))
+            #   data <- ncvar_get(cmip6, cmip6$var[[2]], 
+            #                     start = c(min(lon_ind), min(lat_ind), i), 
+            #                     count = c(length(lon_ind), length(lat_ind), 1))
               
               
-              # for everything else, its 5
-            } else {
+            #   # for everything else, its 5
+            # } else {
               
-              data <- ncvar_get(cmip6, cmip6$var[[3]], 
-                                start = c(min(lon_ind), min(lat_ind), i), 
-                                count = c(length(lon_ind), length(lat_ind), 1))
-            } # end of if else block
+            #   data <- ncvar_get(cmip6, cmip6$var[[3]], 
+            #                     start = c(min(lon_ind), min(lat_ind), i), 
+            #                     count = c(length(lon_ind), length(lat_ind), 1))
+            # } # end of if else block
             
+            data <- ncvar_get(cmip6, cmip6$var[[1]], 
+                              start = c(min(lon_ind), min(lat_ind), i), 
+                              count = c(length(lon_ind), length(lat_ind), 1))
+
             # fill in the missing values
             data[data == fillvalue$value] <- NA
             
@@ -369,7 +378,7 @@ open_cmip6 <- function(timeframe) {
                         max(lon[lon_ind]), 
                         min(lat[lat_ind]), 
                         max(lat[lat_ind]))
-            
+
             nc_raster <- terra::rast(t(data),
                                       ext = extent,
                                       crs = terra::crs("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs +towgs84=0,0,0")
@@ -464,7 +473,8 @@ average_climate_data <- function(fire_season, ssp_scenario){
           monthly_agg_list <- list.files(data, full.names = TRUE)
           
           for (monthly_agg in monthly_agg_list) {
-            
+
+
             # split the string of the file name to extract its month
             splitted_file_name <- strsplit(basename(monthly_agg), split = "_")[[1]]
             
@@ -585,9 +595,12 @@ if (dir.exists(cmip6_fire_season_output)){
   unlink(cmip6_fire_season_output, recursive = TRUE, force = TRUE)
 }
 
+topography <- list.files(paste0(path, "/Data/Final/Topography/Topo_processed"), full.names = TRUE)
+
+
 # now compute monthly averages for each year from the cmip6 dataset.
-open_cmip6(timeframe = "future")
 open_cmip6(timeframe = "historical")
+open_cmip6(timeframe = "future")
 
 # Generating the fire season dictionary from the txt file #
 
@@ -599,8 +612,13 @@ open_cmip6(timeframe = "historical")
 # on python (75th percentile)
 # now we want to export this data and save it to a dictionary
 
+
+
 # import the data:
 fire_months <- readLines(paste0(path, "/Data/stats/yearly_fire_seasons/fire_seasons.txt"))
+
+print(fire_months)
+
 
 # we can use the " : " delimiter to separate years from months
 splitted <- strsplit(fire_months, " : ")
@@ -635,8 +653,8 @@ future_fire_season <- list(
                           #  '2082' = c("06", "07","08", "09", "10"),
                           #  '2083' = c("06", "07","08", "09", "10"),
                           #  '2084' = c("06", "07","08", "09", "10"),
-                           '2085' = c("06", "07","08", "09", "10"),
-                           '2086' = c("06", "07","08", "09", "10"),
+                          #  '2085' = c("06", "07","08", "09", "10"),
+                          #  '2086' = c("06", "07","08", "09", "10"),
                            '2087' = c("06", "07","08", "09", "10"),
                            '2088' = c("06", "07","08", "09", "10"),
                            '2089' = c("06", "07","08", "09", "10"),
@@ -651,6 +669,7 @@ future_fire_season <- list(
                            '2098' = c("06", "07","08", "09", "10"),
                            '2099' = c("06", "07","08", "09", "10"),
                            '2100' = c("06", "07","08", "09", "10"))
+
 
 
 
