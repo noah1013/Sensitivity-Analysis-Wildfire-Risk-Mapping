@@ -41,10 +41,9 @@ Since the climate data is too large, it won't be included in this repository. Ho
 The machine learning code can be found in "python_scripts/ML"
 R code can be found in "R_scripts"
 
-### Stage 1: Removing unnecessary files, Generating Cmip6 data directory structure, Combining Cmip6 daily data to yearly data 
-1. Directory_Remover.py: Remove any accidental directories and/or files remaining after pushing the code. 
-2. Cmip6_Directory_Creator.py: Generate the directory structure for the Cmip6 climate data. 
-3. Cmip6_Data_Merger.py: Combines daily Cmip6 yearly data into yearly .nc data files. 
+### Stage 1: Generating Cmip6 data directory structure, Combining Cmip6 daily data to yearly data 
+1. Cmip6_Directory_Creator.py: Generate the directory structure for the Cmip6 climate data. 
+2. Cmip6_Data_Merger.py: Combines daily Cmip6 yearly data into yearly .nc data files. 
 
 ### Stage 2: Generating reference polygons, Opening the PFT dataset, conversion of MODIS dataset and selecting wildfire seasons.
 
@@ -68,22 +67,24 @@ R code can be found in "R_scripts"
 | Package | Version | 
 | -------- | -------------------------- |
 |os| 3.9.12 |
+|xarray| 2024.10.0 |
 
 ### Geospatial data and data manipulation:
 
 | Package | Version | 
 | -------- | -------------------------- |
-|fiona| 1.9.4.post1 |
+|fiona| 1.10.1 |
 |gc| 3.9.12 |
-|geopandas| 0.12.2 |
+|geopandas| 1.0.1 |
 |json| 3.9.12 |
 |math| 3.9.12 |
-|numpy| 1.21.5 |
-|osgeo (GDAL) | 3.7.0 |
-|pandas| 2.0.2 |
+|numpy| 1.26.4 |
+|osgeo (GDAL) | 3.9.2 |
+|pandas| 2.2.3 |
 |random | 3.9.12 |
-|rasterio| 1.3.7 |
-|shapely| 2.0.1 |
+|rasterio| 1.4.2 |
+|shapely| 2.0.6 |
+
 
 NOTE: If there are issues using the provided requirements.txt to install the osgeo package, a python wheel for the osgeo package is included from https://github.com/cgohlke/geospatial-wheels/releases/tag/v2024.9.22.  
 
@@ -91,20 +92,20 @@ NOTE: If there are issues using the provided requirements.txt to install the osg
 
 | Package | Version | 
 | -------- | -------------------------- |
-|matplotlib | 3.5.1 |
-|seaborn | 0.11.2 |
+|matplotlib | 3.9.2 |
+|seaborn | 0.13.2 |
 |tkinter | 8.6.12 |
 
 ### Graph generation and Graph Convolution Network and feature attribution.
 
 | Package | Version | 
 | -------- | -------------------------- |
-|captum | 0.6.0 |
-|networkx | 2.7.1 |
-|pysal | 23.1 |
-|scikit-learn | 1.0.2 |
-|torch | 2.0.0+cu117 |
-|torch_geometric | 2.3.1 |
+|captum | 0.7.0 |
+|networkx | 3.3 |
+|pysal | 24.7 |
+|scikit-learn | 1.5.2 |
+|torch | 2.4.1 |
+|torch_geometric | 2.6.1 |
 
 
 ## Required libraries for R-scripts.
@@ -113,29 +114,31 @@ NOTE: If there are issues using the provided requirements.txt to install the osg
 
 | Package | Version | 
 | -------- | -------------------------- |
-|dplyr| 1.1.2 |
-|ncdf4| 1.21 |
-|raster| 3.6-23 |
-|rgdal| 1.6-7 |
-|rgeos| 0.6-4 |
-|rstudioapi| 0.15.0 |
-|sf| 1.0-14 |
-|stringr| 1.5.0 |
-|terra| 1.7-39 |
+|dplyr| 1.1.4 |
+|ncdf4| 1.23 |
+|raster| 3.6-30 |
+|sf| 1.0-18 |
+|stringr| 1.5.1 |
+|terra| 1.7-83 |
 
 
 ### Visualisation. 
 | Package | Version | 
 | -------- | -------------------------- |
-|ggplot2| 3.4.2 |
-|tmap| 3.3-3 |
+|ggplot2| 3.5.1 |
+|tmap| 3.3.4 |
 
 
 ### Biovariable generation and Species Distribution modelling.
 
 | Package | Version | 
 | -------- | -------------------------- |
-|dismo| 1.3-14 |
+|dismo| 1.3.14 |
+
+
+## 4. Data Sources:
+1. Cmip6 Climate Data: https://nex-gddp-cmip6.s3.us-west-2.amazonaws.com/index.html#NEX-GDDP-CMIP6/
+2. 2015 Vegetation Data: https://www.gbif.org/dataset/0fe87daf-ed3c-4544-9d41-e187c408ee71
 
 
 ## Relevant Hardware requirements.
