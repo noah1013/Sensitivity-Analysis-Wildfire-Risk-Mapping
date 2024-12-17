@@ -1,0 +1,20 @@
+Model Evaluation for train set
+
+Tree Species = Castanea sativa
+
+class          : ModelEvaluation 
+n presences    : 1173 
+n absences     : 2029 
+AUC            : 0.948621 
+cor            : 0.7817032 
+max TPR+TNR at : 0.4637545 
+
+
+Model Evaluation for test set
+
+class          : ModelEvaluation 
+n presences    : 504 
+n absences     : 2029 
+AUC            : 0.9494766 
+cor            : 0.7069173 
+max TPR+TNR at : 0.4982343 

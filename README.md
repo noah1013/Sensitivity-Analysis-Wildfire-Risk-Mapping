@@ -77,6 +77,7 @@ R code can be found in "R_scripts"
 |fiona| 1.10.1 |
 |gc| 3.9.12 |
 |geopandas| 1.0.1 |
+|georasters| 0.5.29 |
 |json| 3.9.12 |
 |math| 3.9.12 |
 |numpy| 1.26.4 |

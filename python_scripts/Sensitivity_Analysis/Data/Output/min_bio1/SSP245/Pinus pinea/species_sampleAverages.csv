@@ -1,0 +1,24 @@
+Predictor variable,Categorical,Sample average
+Bio_01.tif,false,14.095622252025864
+Bio_02.tif,false,9.262021975455355
+Bio_03.tif,false,39.421613873119405
+Bio_04.tif,false,486.93298053497887
+Bio_05.tif,false,29.920996273868628
+Bio_06.tif,false,6.395580266422353
+Bio_07.tif,false,23.525415919994465
+Bio_08.tif,false,13.234291881333284
+Bio_09.tif,false,22.739892093250283
+Bio_10.tif,false,23.0193213663291
+Bio_11.tif,false,11.242523316705135
+Bio_12.tif,false,23.028792006790695
+Bio_13.tif,false,5.95566098040629
+Bio_14.tif,false,0.037116962053944276
+Bio_15.tif,false,63.80017701076673
+Bio_16.tif,false,11.952107133654977
+Bio_17.tif,false,0.6714679320391119
+Bio_18.tif,false,1.0969116200785352
+Bio_19.tif,false,8.90371676980462
+East_Mediterranean_DEM,false,134.15576658669536
+East_Mediterranean_aspect,false,177.52214683192406
+East_Mediterranean_slope,false,5.179424545606294
+river_proximity_map,false,608.4894563193455

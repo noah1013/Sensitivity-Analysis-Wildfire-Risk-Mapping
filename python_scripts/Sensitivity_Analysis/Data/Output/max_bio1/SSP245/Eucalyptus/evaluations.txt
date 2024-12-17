@@ -1,0 +1,20 @@
+Model Evaluation for train set
+
+Tree Species = Eucalyptus
+
+class          : ModelEvaluation 
+n presences    : 13578 
+n absences     : 21813 
+AUC            : 0.8750364 
+cor            : 0.6361337 
+max TPR+TNR at : 0.4989221 
+
+
+Model Evaluation for test set
+
+class          : ModelEvaluation 
+n presences    : 5818 
+n absences     : 21813 
+AUC            : 0.8764826 
+cor            : 0.5568704 
+max TPR+TNR at : 0.5196043 

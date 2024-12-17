@@ -1,0 +1,20 @@
+Model Evaluation for train set
+
+Tree Species = Quercus suber
+
+class          : ModelEvaluation 
+n presences    : 11779 
+n absences     : 19257 
+AUC            : 0.9153077 
+cor            : 0.7042262 
+max TPR+TNR at : 0.468163 
+
+
+Model Evaluation for test set
+
+class          : ModelEvaluation 
+n presences    : 5048 
+n absences     : 19257 
+AUC            : 0.9170968 
+cor            : 0.6190024 
+max TPR+TNR at : 0.5106806 

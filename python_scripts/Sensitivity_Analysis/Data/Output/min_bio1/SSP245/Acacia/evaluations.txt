@@ -1,0 +1,20 @@
+Model Evaluation for train set
+
+Tree Species = Acacia
+
+class          : ModelEvaluation 
+n presences    : 415 
+n absences     : 738 
+AUC            : 0.9317367 
+cor            : 0.7248045 
+max TPR+TNR at : 0.5532444 
+
+
+Model Evaluation for test set
+
+class          : ModelEvaluation 
+n presences    : 179 
+n absences     : 738 
+AUC            : 0.9150581 
+cor            : 0.6187635 
+max TPR+TNR at : 0.5455703 
